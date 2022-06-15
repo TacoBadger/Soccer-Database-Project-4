@@ -48,7 +48,7 @@ A **loop** is defined as a segment of code that executes multiple times. Iterati
 
 ## Looking for Trends and Patterns
 So here is a few things we will look into and practice with this public dataset:
-- **Comparison of Average Points Per Game for each Team in Home and Away Games**
+- **Which league has the most of Average Points Per Game for each Team in Home and Away Games**
 - **Top Teams in Soccer European Leagues, England Leauge, Spain and more by winning percentage**
 
 ## Importing the dataset from Kaggle to see what tables we have in the dataset
@@ -249,7 +249,7 @@ View(sorted_data)
 ```
 
 ## ggplot Visualizations
-We will start with plotting all the visualizations for this dataset. A visual for each european leagues.
+We will start with plotting all the visualizations for this dataset. A visual for each leagues.
 
 **European League**
 ```bash
@@ -258,6 +258,7 @@ ggplot(data=sorted_data[0:10,], aes(x=team_name,y=win_percentage)) +
   ggtitle("Top 10 teams in all European Leagues")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 ![](https://github.com/TacoBadger/Soccer-Database/blob/main/Visuals/Top%2010%20Teams%20in%20all%20European%20Leagues.png?raw=true)
+
 The visual shows that **FC Barcelona** is the top team in European league based on winning percentage with other teams.
  
 **England League**
@@ -270,7 +271,8 @@ geom_bar(stat="identity",fill="turquoise")+labs(x="Team",y="Winning Percentage")
 ggtitle("Top 10 Teams in England Premier League (EPL)")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 ![](https://github.com/TacoBadger/Soccer-Database/blob/main/Visuals/English%20League.png?raw=true)
-The visual shows that **Chelsea** is the top team in England league based on winning percentage with other teams.
+
+The visual shows that **Manchester United** is the top team in England league based on winning percentage with other teams.
 
 **Spain Liga BBVA League**
 ```bash
@@ -282,6 +284,7 @@ ggplot(data=spain,aes(x=team_name,y=win_percentage))+
   ggtitle("Top 10 teams in Spain LIGA BBVA League")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 ![](https://github.com/TacoBadger/Soccer-Database/blob/main/Visuals/Spain%20League.png?raw=true)
+
 The visual shows that **FC Barcelona** is the top team in Spain league based on winning percentage with other teams.
 
 **Germany League**
@@ -294,6 +297,7 @@ ggplot(data=germany,aes(x=team_name,y=win_percentage))+
   ggtitle("Top 10 Teams in Germany's l Bundesliga League")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 ![](https://github.com/TacoBadger/Soccer-Database/blob/main/Visuals/Germany%20League.png?raw=true)
+
 The visual shows that **FC Bayern Munich** is the top team in Spain league based on winning percentage with other teams.
 
 Let us move on to the next analysis.
@@ -382,4 +386,28 @@ ggplot(all_points, aes(x = avg_home_ppg, y = avg_away_ppg, color = league_name))
        y = "Average Away PPG") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
+![](https://github.com/TacoBadger/Soccer-Database/blob/main/Visuals/Comparison%20of%20Average%20Points%20per%20Game%20for%20each%20Team%20in%20Home%20and%20Away%20games.png?raw=true)
 
+The visual shows **Switzerland Superleague** has the highest average points per game for all the teams in both away and home matches. 
+
+## Key Findings
+**The top teams in this leagues are:**
+- **European League** FC Barcelona and Real Madrid CF tied with SL Benifica
+- **England League**  Manchester United and Chelsea
+- **Spain League** FC Barcelona and Real Madrid CF
+- **German League** FC Bayern Munich and Borussia Dortmund
+-
+And for the League that has the most Average Points per game is the **Switzerland Superleague** for both away and home matches.
+
+## Explore our Tableau Public
+- [@TacoBadger](https://public.tableau.com/app/profile/taco.badger)
+
+## Explore our Notebook
+- [@TacoBadger](https://www.kaggle.com/code/cryptocosy/video-game-analysis-using-ssms)
+
+## What is Next?
+We have finished our practice! This dataset was the most difficult out of all the dataset I worked with.
+- I could have also improved my analysis by adding more relationships or correlations of different values.
+- I could also practice more types of ggplot regarding the additional analysis I could've made.
+- I can also need to learn more advanced functions and commands for the next practice.
+Thank you for reading my kernel or repositories!
