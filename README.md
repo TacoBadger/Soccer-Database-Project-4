@@ -48,7 +48,7 @@ A **loop** is defined as a segment of code that executes multiple times. Iterati
 ## Looking for Trends and Patterns
 So here is a few things we will look into and practice with this public dataset:
 - **Comparison of Average Points Per Game for each Team in Home and Away Games**
-- **Top Teams in Soccer European Leagues by winning percentage**
+- **Top Teams in Soccer European Leagues, England Leauge, Spain and more by winning percentage**
 
 ## Importing the dataset from Kaggle to see what tables we have in the dataset
 It will always start with downloading the dataset as a zip file and you can extract it wherever you want on your computer.
@@ -170,6 +170,7 @@ We used the **Mutate** function for this step.
 After a few hours of researching also what the whole code is called, it is called a loop. There are lots of type of loop but let's just focus on this one first.
 
 Based on a community member in RStudio Discord,
+
 *The first line finds which row of Match has the same team id as that of a given row of new_match_data. The second line adds the country_id of that row from Match to the new_match_data data frame. The third does the same thing for the team name.
 Essentially, there are several data frames that contain data on aspects of each team, and each contains a key column that can be matched to  new_match_data$home_team_api_id to link the correct data to each team.*
 *This code looks correct, but it could be improved. There's no need for a for loop here, since the functions used are all vectorized (they treat a vector as a single argument, so it's wasteful to pass elements of the vector individually as arguments). Instead of the for loop, it would be better to use the match function or dplyr::inner_join to join the data frames directly (since the code uses the dplyr package)*
@@ -189,6 +190,99 @@ print(head(new_match_data))
 ```
 The **head()** function is used to display the first number of rows in the data frame or in the input data frame.
 
+## Creating additional analysis for the winning percentage and won matches
+We will also use the new match data for this additional analysis, we will add the winning percentage and the won matches. We will create the home indexes and away indexes.
 
+We will do the similar functions in the previous analysis.
 
+```bash
+for(id in rownames(new_match_data))
+{
+    #win_count stores the number of wins if the current team has scored more goals than the opponent team.
+    win_count = 0
+    #Find all the records in main "Match" table which match the current team id
+    home_indexes = which(Match$home_team_api_id == new_match_data$home_team_api_id[as.numeric(id)])
+    away_indexes = which(Match$away_team_api_id == new_match_data$away_team_api_id[as.numeric(id)])
+    for(i in home_indexes)
+    {
+        if(Match$home_team_goal[i]>Match$away_team_goal[i])
+        {
+            win_count = win_count +1
+        }
+    }
+    for(i in away_indexes)
+    {
+        if(Match$away_team_goal[i]>Match$home_team_goal[i])
+        {
+            win_count = win_count + 1
+        }
+    }
+    new_match_data$wins[as.numeric(id)] <- win_count
+    new_match_data$win_percentage[as.numeric(id)] <- as.double(win_count/new_match_data$total_matches[as.numeric(id)]*100)
+}
 
+# the code also indicates if the home team goal is highter than away that will count as 1 and vice versa for away then view the data
+View(new_match_data)
+```
+I also researched about this code and it is called Loop and Iteration.
+
+A **loop** is defined as a segment of code that executes multiple times. 
+**Iteration** refers to the process in which the code segment is executed once. One iteration refers to 1-time execution of a loop. A loop can undergo many iterations.
+
+Then we will drop the unwanted columns like before.
+
+```bash
+#Drop Away_team_id column and change home_team_api_id columns name to team_id
+drop_columns <- c("away_team_api_id")
+new_match_data <- new_match_data[ , !names(new_match_data) %in% drop_columns]
+names(new_match_data)[names(new_match_data)=="home_team_api_id"]<-"team_id"
+```
+Then we will sort out the data by renaming it sorted data.
+```bash
+#Sort the teams based on the winning percentage
+sorted_data <- new_match_data[order(-new_match_data$win_percentage),]
+print(sorted_data[0:10,])
+
+# View the data
+View(sorted_data)
+```
+
+## ggplot Visualizations
+We will start with plotting all the visualizations for this dataset. A visual for each european leagues.
+
+**European League**
+```bash
+ggplot(data=sorted_data[0:10,], aes(x=team_name,y=win_percentage)) +
+  geom_bar(stat="identity", fill="steelblue")+labs(x="Team",y="Winning percentage")+
+  ggtitle("Top 10 teams in all European Leagues")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+**England League**
+```bash
+#Find Best teams in England's England Premier League
+english_team <- sorted_data[sorted_data$country=="England",]
+england <- english_team[order(-english_team$win_percentage),][1:10,]
+ggplot(data=england,aes(x=team_name,y=win_percentage))+
+geom_bar(stat="identity",fill="turquoise")+labs(x="Team",y="Winning Percentage")+
+ggtitle("Top 10 Teams in England Premier League (EPL)")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+**Spain Liga BBVA League**
+```bash
+#Find the top teams from spain league 
+spain_teams <- sorted_data[sorted_data$country=="Spain",]
+spain <- spain_teams[order(-spain_teams$win_percentage),][1:10,]
+ggplot(data=spain,aes(x=team_name,y=win_percentage))+
+  geom_bar(stat="identity",fill="darkseagreen")+labs(x="Team",y="Winning Percentage")+
+  ggtitle("Top 10 teams in Spain LIGA BBVA League")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+**Germany League**
+```bash
+#Find top teams in Germany's l Bundesliga League
+german_team <- sorted_data[sorted_data$country=="Germany",]
+germany <- german_team[order(-german_team$win_percentage),][1:10,]
+ggplot(data=germany,aes(x=team_name,y=win_percentage))+
+  geom_bar(stat='identity',fill="firebrick ")+labs(x="Team",y="Winning Percentage")+
+  ggtitle("Top 10 Teams in Germany's l Bundesliga League")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
