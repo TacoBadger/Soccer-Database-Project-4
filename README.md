@@ -1,4 +1,4 @@
-# Soccer Database
+## Soccer Database
 ![](https://raw.githubusercontent.com/TacoBadger/Soccer-Database/e01e9cb3438da6373dd5f4424438c4143b1eaaa4/banner.png)
 
 ## Analysis of the Soccer Database in Kaggle
@@ -128,3 +128,67 @@ Then we will combine the data we made so it will be easier to work with.
 #Combine these two dataframes
 new_match_data <- cbind(home_match,away_match)
 ```
+**Column Bind or Cbind** function stands for column-bind. The cbind function is used to combine vectors, matrices and/or data frames by columns.
+
+Then to the next part of the analysis. 
+
+## Creating new columns for the anaylsis
+We will add three columns to the new data to organize and calculate the winning percentage.
+- Total Matches a particular team has played?
+- How many matches the team has won at home and away?
+- What is the winning percentage?
+
+```bash 
+#Add three new columns,
+# a. total matches a particular team has played
+# b. how many matches the team has won at home and away
+# c. what is the winning percentage. (wins/total_matches * 100)
+new_match_data <- new_match_data %>% mutate(
+  total_matches = home_matches_number + away_matches_number,
+  wins = 0,
+  win_percentage = 0,
+  country = "",
+  team_name = ""
+)
+
+for(row1 in rownames(new_match_data))
+{
+  home_indexes = which(Match$home_team_api_id == new_match_data$home_team_api_id[as.numeric(row1)])
+  new_match_data$country[as.numeric(row1)] <- Country$name[Country$id==Match$country_id[as.numeric(home_indexes[1])]]
+  new_match_data$team_name[as.numeric(row1)] <- Team$team_long_name[Team$team_api_id==new_match_data$home_team_api_id[as.numeric(row1)]]
+}
+# the code above also indicates to make a new row which the datatpye is numeric.
+
+# then you can view the data
+View(new_match_data)
+```
+
+We used the **Mutate** function for this step.
+
+**Mutate** is used to create a variable from a dataset. This package is included in the dyplr package.
+
+After a few hours of researching also what the whole code is called, it is called a loop. There are lots of type of loop but let's just focus on this one first.
+
+Based on a community member in RStudio Discord,
+*The first line finds which row of Match has the same team id as that of a given row of new_match_data. The second line adds the country_id of that row from Match to the new_match_data data frame. The third does the same thing for the team name.
+Essentially, there are several data frames that contain data on aspects of each team, and each contains a key column that can be matched to  new_match_data$home_team_api_id to link the correct data to each team.*
+*This code looks correct, but it could be improved. There's no need for a for loop here, since the functions used are all vectorized (they treat a vector as a single argument, so it's wasteful to pass elements of the vector individually as arguments). Instead of the for loop, it would be better to use the match function or dplyr::inner_join to join the data frames directly (since the code uses the dplyr package)*
+
+So this is the easiest way to understand the code.
+
+We will also drop the unnecessary columns "Home matches and away matches"
+```bash
+#Drop the unnecessary columns "home_matches_number" and "away_matches_number"
+drops_columns <- c("home_matches_number","away_matches_number")
+new_match_data <- new_match_data[ , !(names(new_match_data) %in% drops_columns)]
+```
+Then the following code will just print the notice that unnecessary columns has been dropped and view the new data.
+```bash
+print("Removed unnecessary columns")
+print(head(new_match_data))
+```
+The **head()** function is used to display the first number of rows in the data frame or in the input data frame.
+
+
+
+
