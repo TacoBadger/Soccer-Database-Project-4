@@ -40,12 +40,20 @@ We will perform the following queries:
 - combining tables
 - mutate function
 - loops
-- 
+
 **Mutate** function is used to create a new variable from a data set. In order to use the function, we need to install the dplyr package, which is an add-on to R that includes a host of cool functions for selecting, filtering, grouping, and arranging data.
 
 A **loop** is defined as a segment of code that executes multiple times. Iteration refers to the process in which the code segment is executed once. One iteration refers to 1-time execution of a loop. A loop can undergo many iterations.
 
+## Looking for Trends and Patterns
+So here a few things we will look into:
+- **Comparison of Average Points Per Game for each Team in Home and Away Games**
+- **Top Teams in Soccer Leagues by winning percentage**
 
+## Importing the dataset from Kaggle to see what tables we have in the dataset
+It will always start with downloading the dataset as a zip file and you can extract it wherever you want on your computer.
+We will be using RStudio, so I uploaded the database in  the lower right panel where it says files.
+You can see that it is a SQL Database, so we need to install the packages to help us retrieve the data.
 
 
 
