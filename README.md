@@ -410,4 +410,5 @@ We have finished our practice! This dataset was the most difficult out of all th
 - I could have also improved my analysis by adding more relationships or correlations of different values.
 - I could also practice more types of ggplot regarding the additional analysis I could've made.
 - I can also need to learn more advanced functions and commands for the next practice.
+
 Thank you for reading my kernel or repositories!
