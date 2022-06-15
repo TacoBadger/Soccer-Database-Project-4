@@ -20,6 +20,7 @@ We will manually upload all the dataset used but when it passes the limit of the
 - [Let's do some Data Analysis](#lets-do-some-data-analysis)
 - [ggplot Visualizations](#ggplot-visualizations)
 - [Comparison of Average Points Per Game](#comparison-of-average-points-per-game)
+- [ggplot for this analysis](#ggplot-for-this-analysis)
 - [Key Findings](#key-findings)
 - [Explore our Tableau Public](#explore-our-tableau-public)
 - [Explore our Notebook](#explore-our-notebook)
@@ -256,7 +257,9 @@ ggplot(data=sorted_data[0:10,], aes(x=team_name,y=win_percentage)) +
   geom_bar(stat="identity", fill="steelblue")+labs(x="Team",y="Winning percentage")+
   ggtitle("Top 10 teams in all European Leagues")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
-
+![](https://github.com/TacoBadger/Soccer-Database/blob/main/Visuals/Top%2010%20Teams%20in%20all%20European%20Leagues.png?raw=true)
+The visual shows that **FC Barcelona** is the top team in European league based on winning percentage with other teams.
+ 
 **England League**
 ```bash
 #Find Best teams in England's England Premier League
@@ -266,6 +269,8 @@ ggplot(data=england,aes(x=team_name,y=win_percentage))+
 geom_bar(stat="identity",fill="turquoise")+labs(x="Team",y="Winning Percentage")+
 ggtitle("Top 10 Teams in England Premier League (EPL)")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
+![](https://github.com/TacoBadger/Soccer-Database/blob/main/Visuals/English%20League.png?raw=true)
+The visual shows that **Chelsea** is the top team in England league based on winning percentage with other teams.
 
 **Spain Liga BBVA League**
 ```bash
@@ -276,6 +281,8 @@ ggplot(data=spain,aes(x=team_name,y=win_percentage))+
   geom_bar(stat="identity",fill="darkseagreen")+labs(x="Team",y="Winning Percentage")+
   ggtitle("Top 10 teams in Spain LIGA BBVA League")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
+![](https://github.com/TacoBadger/Soccer-Database/blob/main/Visuals/Spain%20League.png?raw=true)
+The visual shows that **FC Barcelona** is the top team in Spain league based on winning percentage with other teams.
 
 **Germany League**
 ```bash
@@ -286,3 +293,93 @@ ggplot(data=germany,aes(x=team_name,y=win_percentage))+
   geom_bar(stat='identity',fill="firebrick ")+labs(x="Team",y="Winning Percentage")+
   ggtitle("Top 10 Teams in Germany's l Bundesliga League")+theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
+![](https://github.com/TacoBadger/Soccer-Database/blob/main/Visuals/Germany%20League.png?raw=true)
+The visual shows that **FC Bayern Munich** is the top team in Spain league based on winning percentage with other teams.
+
+Let us move on to the next analysis.
+
+## Comparison of Average Points Per Game
+Now we will move to comparison of Average Points per game for each Team in Home and Away Games. I made a new RScript file to plot and analyze this data.
+
+Since we have the database in the project already we will just select the tables that we need.
+```bash
+league <- tbl_df(dbGetQuery(db,"SELECT * FROM League"))
+team   <- tbl_df(dbGetQuery(db,"SELECT * FROM Team"))
+match  <- tbl_df(dbGetQuery(db,"SELECT * FROM Match"))
+```
+Then we sort to only the data that we need for this analysis.
+```bash
+league <- select(league, id, name, country_id) %>% rename(league_id = id, league_name = name)
+team   <- select(team, team_api_id, team_long_name, team_short_name)
+match  <- select(match, league_id, home_team_api_id, away_team_api_id, home_team_goal, away_team_goal)
+```
+
+## Calculating the points for each match
+Then we calculate points scored for each match and we will call it match points.
+
+```bash
+# Calculate the points scored for each match -> match_points
+match_points <- match %>%
+  mutate(home_team_points = if_else((home_team_goal > away_team_goal),3,if_else((home_team_goal == away_team_goal),1,0))) %>%
+  mutate(away_team_points = if_else((home_team_goal > away_team_goal),0,if_else((home_team_goal == away_team_goal),1,3)))
+ 
+ # this code is similar to getting the winning percentage on the previous analysis.
+```
+Then we proceed to calculating the average points for home and away.
+```bash
+# Calculate average home team points per game
+home_points <- match_points %>%
+  select(league_id, team_api_id = home_team_api_id, home_team_points) %>%
+  group_by(league_id, team_api_id) %>%
+  summarize(avg_home_ppg = mean(home_team_points))
+  
+# Calculate average away team points per game
+away_points <- match_points %>%
+  select(league_id, team_api_id = away_team_api_id, away_team_points) %>%
+  group_by(league_id, team_api_id) %>%
+  summarize(avg_away_ppg = mean(away_team_points))
+```
+
+Then we will start combining the data.
+```bash
+# Combine the data for the average home and away team points per game
+all_points <- left_join(home_points, away_points, by = c("league_id", "team_api_id"))
+
+# Add the average points scored per game (home and away)
+# It's OK to take a simple average of the home and away averages as each team plays the same number of home and away games
+all_points <- all_points %>%
+  mutate(avg_ppg = (avg_home_ppg + avg_away_ppg)/2)
+  
+# Add the details of the league and the team to each record so that their names can be displayed on the plots
+all_points <- left_join(all_points, league, by = "league_id")
+all_points <- left_join(all_points, team, by = "team_api_id")
+```
+
+In the example above we used the LEFT JOIN, SUMMARIZE AND MEAN.
+
+A **left join** in R is a merge operation between two data frames where the merge returns all of the rows from one table (the left side) and any matching rows from the second table. A left join in R will NOT return values of the second table which do not already exist in the first table.
+
+**Summarize** As its name implies, the summarize function reduces a data frame to a summary of just one vector or value. Many times, these summaries are calculated by grouping observations using a factor or categorical variables first.
+
+**Mean** function in R -mean()  calculates the arithmetic mean. mean() function calculates arithmetic mean of vector with NA values  and arithmetic mean of column in data frame. mean of a group can also calculated using mean() function in R by providing it inside the aggregate function. with mean() function we can also perform row wise mean using dplyr package and also column wise mean lets see an example of each.
+
+- mean of the list of vector elements with NA values
+- mean of a particular column of the dataframe in R
+- Mean of multiple columns of a dataframe in R
+- column wise mean of the dataframe using mean() function
+- mean of the group in R dataframe using aggregate() and dplyr package
+- Row wise mean of the dataframe in R using mean() function
+
+## ggplot for this analysis
+Then now we can start plotting our ggplot visualization.
+```bash
+ggplot(all_points, aes(x = avg_home_ppg, y = avg_away_ppg, color = league_name)) +
+  geom_point() +
+  xlim(0,3) +
+  ylim(0,3) +
+  labs(title = "Comparison of Average Points Per Game (PPG) for each Team\nin Home and Away Games",
+       x = "Average Home PPG",
+       y = "Average Away PPG") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
