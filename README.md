@@ -403,7 +403,7 @@ And for the League that has the most Average Points per game is the **Switzerlan
 - [@TacoBadger](https://public.tableau.com/app/profile/taco.badger)
 
 ## Explore our Notebook
-- [@TacoBadger](https://www.kaggle.com/code/cryptocosy/video-game-analysis-using-ssms)
+- [@TacoBadger](https://www.kaggle.com/code/cryptocosy/soccer-database)
 
 ## What is Next?
 We have finished our practice! This dataset was the most difficult out of all the dataset I worked with.
