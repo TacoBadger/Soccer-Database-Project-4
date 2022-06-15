@@ -1,2 +1,1 @@
-# Soccer-Database
-Soccer Database Analysis in Kaggle.
+# Soccer Database
