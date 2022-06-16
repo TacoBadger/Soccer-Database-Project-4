@@ -396,7 +396,7 @@ The visual shows **Switzerland Superleague** has the highest average points per 
 - **England League**  Manchester United and Chelsea
 - **Spain League** FC Barcelona and Real Madrid CF
 - **German League** FC Bayern Munich and Borussia Dortmund
--
+
 And for the League that has the most Average Points per game is the **Switzerland Superleague** for both away and home matches.
 
 ## Explore our Tableau Public
