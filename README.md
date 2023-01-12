@@ -406,9 +406,9 @@ And for the League that has the most Average Points per game is the **Switzerlan
 - [@TacoBadger](https://www.kaggle.com/code/cryptocosy/soccer-database)
 
 ## What is Next?
-We have finished our practice! This dataset was the most difficult out of all the dataset I worked with.
+We have finished our practice! This dataset was the most difficult out of all the dataset I worked with thus far.
 - I could have also improved my analysis by adding more relationships or correlations of different values.
 - I could also practice more types of ggplot regarding the additional analysis I could've made.
 - I can also need to learn more advanced functions and commands for the next practice.
 
-Thank you for reading my kernel or repositories!
+Thank you for reading my case study!
